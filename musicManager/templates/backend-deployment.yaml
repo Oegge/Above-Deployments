@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "music-stack.fullname" . }}-backend
+  labels:
+    {{- include "music-stack.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount.backend }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "music-stack.name" . }}-backend
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "music-stack.name" . }}-backend
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      imagePullSecrets:
+              {{- range .Values.backend.imagePullSecrets }}
+        - name: {{ .name }}
+              {{- end }}
+      containers:
+        - name: backend
+          image: "{{ .Values.backend.image }}:{{ .Values.backend.tag }}"
+          imagePullPolicy: {{ .Values.backend.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.backend.port }}
+              name: http
+          env:
+            # Common 12-factor style DB settings; adjust to what your app expects
+            - name: ConnectionStrings__PostgreSQLConnection
+              value: "Host={{ include "music-stack.fullname" . }}-postgres;Port={{ .Values.postgres.port }};Database={{ .Values.postgres.database }};Username={{ .Values.postgres.username }};Password={{ .Values.postgres.password }}"
+            # If your app uses a single DATABASE_URL, you can generate one like:
+            - name: DATABASE_URL
+              value: "postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
+            - name: MEDIA_DIR
+              value: {{ .Values.backend.mediaMountPath | quote }}
+            {{- range $k, $v := .Values.backend.extraEnv }}
+            - name: {{ $k }}
+              value: "{{ $v }}"
+            {{- end }}
+          volumeMounts:
+            - name: media
+              mountPath: {{ .Values.backend.mediaMountPath }}
+            - name: wwwroot
+              mountPath: /app/wwwroot
+          resources:
+            {{- toYaml .Values.resources.backend | nindent 12 }}
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: {{ include "music-stack.fullname" . }}-media
+        - name: wwwroot
+          persistentVolumeClaim:
+            claimName: {{ include "music-stack.fullname" . }}-wwwroot
