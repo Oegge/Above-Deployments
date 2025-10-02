@@ -1,0 +1,11 @@
+apiVersion: v2
+name: encounter-stack
+description: Above Encounters (frontend + backend) with Mongo and media storage
+type: application
+version: 0.1.0
+appVersion: "latest"
+dependencies:
+  - name: mongodb
+    version: 15.0.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: mongodb.enabled

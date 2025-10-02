@@ -1,0 +1,16 @@
+{{- if .Values.wwwroot.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "above.fullname" . }}-wwwroot
+  labels:
+    {{- include "above.labels" . | nindent 4 }}
+spec:
+  accessModes: ["ReadWriteOnce"]
+  {{- if .Values.wwwroot.storageClassName }}
+  storageClassName: {{ .Values.wwwroot.storageClassName | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.wwwroot.storage }}
+{{- end }}

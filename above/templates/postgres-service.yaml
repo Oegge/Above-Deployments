@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "above.fullname" . }}-postgres
+  labels:
+    {{- include "above.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: pg
+      port: {{ .Values.postgres.port }}
+      targetPort: {{ .Values.postgres.port }}
+  selector:
+    app.kubernetes.io/name: {{ include "above.name" . }}-postgres
+    app.kubernetes.io/instance: {{ .Release.Name }}

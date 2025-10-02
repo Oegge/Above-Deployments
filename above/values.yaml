@@ -1,0 +1,65 @@
+replicaCount:
+  backend: 1
+  frontend: 1
+
+backup:
+  enabled: true
+  schedule: "0 */3 * * *"
+  table: "public.my_table"
+
+backend:
+  image: ghcr.io/oegge/dnd-above
+  tag: latest
+  pullPolicy: Always
+  port: 8080
+  mediaMountPath: /data/media
+  extraEnv: { }
+  LOG_LEVEL: info
+  imagePullSecrets:
+    - name: ghcr-cred
+frontend:
+  image: ghcr.io/oegge/dnd-above-frontend
+  tag: latest
+  pullPolicy: Always
+  port: 80
+  imagePullSecrets:
+    - name: ghcr-cred
+postgres:
+  image: postgres
+  tag: "17"
+  port: 5432
+  storage: 5Gi
+  username: above
+  database: abovedb
+  password: "ae2b1c29-684e-49f9-b3d0-b28b7f01fd08"
+
+wwwroot:
+  enabled: false
+  storage: 100Gi
+  storageClassName: ""
+
+media:
+  storage: 50Gi
+  storageClassName: "standard"
+
+service:
+  type: ClusterIP
+
+ingress:
+  frontend:
+    enabled: true
+    className: "nginx"
+    host: characters.above.de
+    annotations: { }
+    tls: [ ] # e.g. [{ secretName: above-frontend-tls, hosts: [above.local] }]
+  backend:
+    enabled: true
+    className: "nginx"
+    host: api.characters.above.de
+    annotations: { }
+    tls: [ ]
+
+resources:
+  backend: { }
+  frontend: { }
+  postgres: { }

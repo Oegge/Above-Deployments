@@ -1,0 +1,17 @@
+Thanks for installing {{ .Chart.Name }}!
+
+Frontend Service:
+  kubectl get svc {{ include "above.fullname" . }}-frontend
+
+Backend Service:
+  kubectl get svc {{ include "above.fullname" . }}-backend
+
+On Minikube, you can get a quick URL:
+  minikube service {{ include "above.fullname" . }}-frontend --url
+  minikube service {{ include "above.fullname" . }}-backend --url
+
+If you enabled ingress on Minikube:
+  minikube addons enable ingress
+  # add hosts entries (Windows example as Admin):
+  # 127.0.0.1 above.de
+  # 127.0.0.1 api.above.de

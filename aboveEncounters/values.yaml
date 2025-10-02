@@ -3,9 +3,9 @@ replicaCount:
   frontend: 1
 
 backend:
-  image: ghcr.io/oegge/music-manager-backend
+  image: ghcr.io/oegge/above-encounters
   tag: latest
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   port: 8080
   mediaMountPath: /data/media
   extraEnv: { }
@@ -13,21 +13,27 @@ backend:
   imagePullSecrets:
     - name: ghcr-cred
 frontend:
-  image: ghcr.io/oegge/music-manager-frontend
+  image: ghcr.io/oegge/above-encounters-frontend
   tag: latest
   pullPolicy: Always
   port: 80
   imagePullSecrets:
     - name: ghcr-cred
-postgres:
-  image: postgres
-  tag: "16"
-  port: 5432
-  storage: 5Gi
-  # You MUST change this before installing in real environments
-  username: music
-  database: musicdb
-  password: "de2b1c29-684e-49f9-b3d0-b28b7f01fd08"
+
+mongodb:
+  image:
+    repository: docker.io/bitnami/mongodb
+  enabled: true
+  auth:
+    enabled: true
+    rootPassword: "supersecret"
+    username: "appuser"
+    password: "apppass"
+    database: "appdb"
+  architecture: standalone
+  persistence:
+    enabled: true
+    size: 8Gi
 
 wwwroot:
   enabled: true
@@ -46,13 +52,13 @@ ingress:
   frontend:
     enabled: true
     className: "nginx"
-    host: music.above.de
+    host: encounters.above.de
     annotations: { }
     tls: [ ] # e.g. [{ secretName: music-frontend-tls, hosts: [music.local] }]
   backend:
     enabled: true
     className: "nginx"
-    host: api.music.above.de
+    host: api.encounters.above.de
     annotations: { }
     tls: [ ]
 

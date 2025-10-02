@@ -1,0 +1,17 @@
+apiVersion: v2
+name: platform
+version: 0.1.0
+type: application
+
+dependencies:
+  - name: above-main
+    version: 0.1.0
+    repository: "file://../above"
+
+  - name: encounter-stack
+    version: 0.1.0
+    repository: "file://../aboveEncounters"
+
+  - name: music-stack
+    version: 0.1.0
+    repository: "file://../musicManager"

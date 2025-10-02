@@ -28,7 +28,7 @@ helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx  --namespace in
 # install the music manager
 
 ```bash
-helm install music musicManager
+helm install music musicManager -n music --create-namespace
 ```
 
 ```bash
@@ -36,7 +36,7 @@ helm upgrade music musicManager
 ```
 # uninstall the music manager from the cluster
 ```bash
- helm uninstall music
+ helm uninstall music -n music
  ```
 
 # stopping the cluster

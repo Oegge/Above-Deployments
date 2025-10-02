@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "music-stack.fullname" . }}-backend
+  name: {{ include "encounter-stack.fullname" . }}-backend
   labels:
-    {{- include "music-stack.labels" . | nindent 4 }}
+    {{- include "encounter-stack.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount.backend }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "music-stack.name" . }}-backend
+      app.kubernetes.io/name: {{ include "encounter-stack.name" . }}-backend
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "music-stack.name" . }}-backend
+        app.kubernetes.io/name: {{ include "encounter-stack.name" . }}-backend
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       imagePullSecrets:
@@ -28,10 +28,12 @@ spec:
             - containerPort: {{ .Values.backend.port }}
               name: http
           env:
-            # Common 12-factor style DB settings; adjust to what your app expects
-            - name: ConnectionStrings__PostgreSQLConnection
-              value: "Host={{ include "music-stack.fullname" . }}-postgres;Port={{ .Values.postgres.port }};Database={{ .Values.postgres.database }};Username={{ .Values.postgres.username }};Password={{ .Values.postgres.password }}"
-            # If your app uses a single DATABASE_URL, you can generate one like:
+            - name: ConnectionStrings__MongoDb
+              value: >-
+                mongodb://{{ .Values.mongodb.username }}:{{ .Values.mongodb.password }}
+                @{{ include "encounter-stack.fullname" . }}-mongo:{{ .Values.mongodb.port }}
+                /{{ .Values.mongodb.database }}
+
             - name: MEDIA_DIR
               value: {{ .Values.backend.mediaMountPath | quote }}
             {{- range $k, $v := .Values.backend.extraEnv }}
@@ -46,4 +48,4 @@ spec:
       volumes:
         - name: wwwroot
           persistentVolumeClaim:
-            claimName: {{ include "music-stack.fullname" . }}-wwwroot
+            claimName: {{ include "encounter-stack.fullname" . }}-wwwroot

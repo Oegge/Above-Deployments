@@ -1,0 +1,12 @@
+dependencies:
+- name: above-main
+  repository: file://../above
+  version: 0.1.0
+- name: encounter-stack
+  repository: file://../aboveEncounters
+  version: 0.1.0
+- name: music-stack
+  repository: file://../musicManager
+  version: 0.1.0
+digest: sha256:2a7c7b082fc18c07df6259524a692f60f14cc95ffb7a1e1890ab392239125ac8
+generated: "2025-10-04T11:26:34.5650765+02:00"
