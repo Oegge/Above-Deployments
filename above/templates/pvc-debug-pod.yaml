@@ -1,0 +1,39 @@
+{{- if .Values.pvcDebug.enabled }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "above.fullname" . }}-pvc-debug
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "above.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: pvc-debug
+  {{- with .Values.pvcDebug.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  restartPolicy: Never
+  {{- if .Values.pvcDebug.serviceAccountName }}
+  serviceAccountName: {{ .Values.pvcDebug.serviceAccountName }}
+  {{- end }}
+  containers:
+    - name: debug
+      image: {{ .Values.pvcDebug.image.repository }}:{{ .Values.pvcDebug.image.tag }}
+      imagePullPolicy: {{ .Values.pvcDebug.image.pullPolicy }}
+      command: ["sh","-c","sleep {{ .Values.pvcDebug.sleepSeconds }}"]
+      {{- if .Values.pvcDebug.securityContext }}
+      securityContext:
+        {{- toYaml .Values.pvcDebug.securityContext | nindent 8 }}
+      {{- end }}
+      volumeMounts:
+        - name: pvc
+          mountPath: {{ .Values.pvcDebug.mountPath }}
+          {{- if .Values.pvcDebug.readOnly }}
+          readOnly: true
+          {{- end }}
+  volumes:
+    - name: pvc
+      persistentVolumeClaim:
+        claimName: {{ .Values.backup.pvc.name | quote }}
+{{- end }}

@@ -12,9 +12,17 @@ spec:
     spec:
       template:
         spec:
+          ttlSecondsAfterFinished: 300
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: {{ .Values.backup.pvc.name | quote }}
           restartPolicy: OnFailure
           containers:
             - name: backup
+              volumeMounts:
+                - name: backups
+                  mountPath: {{ .Values.backup.outputDir | quote }}
               image: "postgres:{{ .Values.postgres.tag }}"
               imagePullPolicy: IfNotPresent
               env:
@@ -23,27 +31,19 @@ spec:
                 - name: PGPORT
                   value: {{ .Values.postgres.port | quote }}
                 - name: PGDATABASE
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ include "above.fullname" . }}-postgres-auth
-                      key: database
+                  value: {{.Values.postgres.database}}
                 - name: PGUSER
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ include "above.fullname" . }}-postgres-auth
-                      key: username
+                  value: {{.Values.postgres.username}}
                 - name: PGPASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ include "above.fullname" . }}-postgres-auth
-                      key: password
+                  value: {{.Values.postgres.password}}
               command: ["/bin/sh","-lc"]
               args:
                 - |
                   set -euo pipefail
                   TS="$(date +%F_%H%M%S)"
                   TABLE="{{ .Values.backup.table }}"
-                  OUT="/tmp/${TABLE//./_}_${TS}.dump"
+                  SAFE_TABLE="$(printf '%s' "$TABLE" | tr '.' '_')"
+                  OUT="{{ .Values.backup.outputDir }}/${SAFE_TABLE}_${TS}.dump"
                   pg_dump -F c -t "$TABLE" -f "$OUT" "$PGDATABASE"
                   gzip -9 "$OUT"
                   echo "Backup created: ${OUT}.gz"

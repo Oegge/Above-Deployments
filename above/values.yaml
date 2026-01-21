@@ -5,7 +5,25 @@ replicaCount:
 backup:
   enabled: true
   schedule: "0 */3 * * *"
-  table: "public.my_table"
+  table: "public.characterstate"
+  outputDir: /backups
+  pvc:
+    enabled: true
+    name: "pg-table-backups"
+
+pvcDebug:
+  enabled: false
+  mountPath: "/mnt"
+  readOnly: true
+  sleepSeconds: 36000
+  image:
+    repository: "busybox"
+    tag: "1.36"
+    pullPolicy: IfNotPresent
+  annotations: {}
+  serviceAccountName: ""
+  securityContext: {}
+
 
 backend:
   image: ghcr.io/oegge/dnd-above
