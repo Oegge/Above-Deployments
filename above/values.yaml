@@ -12,7 +12,7 @@ backup:
     name: "pg-table-backups"
 
 pvcDebug:
-  enabled: false
+  enabled: true
   mountPath: "/mnt"
   readOnly: true
   sleepSeconds: 36000
@@ -27,7 +27,7 @@ pvcDebug:
 
 backend:
   image: ghcr.io/oegge/dnd-above
-  tag: latest
+  tag: release
   pullPolicy: Always
   port: 8080
   mediaMountPath: /data/media
@@ -41,7 +41,7 @@ frontend:
   pullPolicy: Always
   port: 80
   imagePullSecrets:
-    - name: ghcr-cred
+    - name: ghcr-cred1
 postgres:
   image: postgres
   tag: "17"

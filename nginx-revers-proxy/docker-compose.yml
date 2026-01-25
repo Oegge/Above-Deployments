@@ -2,9 +2,9 @@ version: "3.9"
 services:
   nginx-proxy:
     image: nginx:1.27-alpine
-    container_name: music-proxy
+    container_name: proxy
     ports:
-      - "80:80"    # HTTP to NGINX (required)
+      - "84:84"    # HTTP to NGINX (required)
       - "443:443"  # HTTPS passthrough (optional; comment out if not using)
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
