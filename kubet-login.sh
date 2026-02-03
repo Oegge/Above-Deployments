@@ -1,5 +1,5 @@
 kubectl create secret docker-registry ghcr-cred \
-  -n above-prod \
+  -n encounters \
   --docker-server=ghcr.io \
   --docker-username=Oegge \
   --docker-password= \

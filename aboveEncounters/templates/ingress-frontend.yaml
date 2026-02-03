@@ -17,6 +17,13 @@ spec:
     - host: {{ .Values.ingress.frontend.host | quote }}
       http:
         paths:
+          - path: /monster-images
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "encounter-stack.fullname" . }}-backend
+                port:
+                  number: {{ .Values.backend.port }}
           - path: /
             pathType: Prefix
             backend:

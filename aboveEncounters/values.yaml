@@ -7,7 +7,7 @@ backend:
   tag: latest
   pullPolicy: IfNotPresent
   port: 8080
-  mediaMountPath: /data/media
+  mediaMountPath: /data/images
   extraEnv: { }
   LOG_LEVEL: info
   imagePullSecrets:
@@ -21,11 +21,14 @@ frontend:
     - name: ghcr-cred
 
 mongodb:
+  port: 27017
   image:
-    repository: docker.io/bitnami/mongodb
+    registry: docker.io
+    repository: bitnamilegacy/mongodb
+    tag: 7.0.6-debian-12-r0
   enabled: true
   auth:
-    enabled: true
+    enabled: false
     rootPassword: "supersecret"
     username: "appuser"
     password: "apppass"

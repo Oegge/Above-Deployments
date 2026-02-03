@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc-loader
+spec:
+  restartPolicy: Never
+  containers:
+    - name: loader
+      image: busybox
+      command: ["sleep", "3600"]
+      volumeMounts:
+        - name: wwwroot
+          mountPath: /data/wwwroot
+  volumes:
+    - name: wwwroot
+      persistentVolumeClaim:
+        claimName: encounters-encounter-stack-wwwroot

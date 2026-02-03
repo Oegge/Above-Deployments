@@ -30,10 +30,7 @@ spec:
           env:
             - name: ConnectionStrings__MongoDb
               value: >-
-                mongodb://{{ .Values.mongodb.username }}:{{ .Values.mongodb.password }}
-                @{{ include "encounter-stack.fullname" . }}-mongo:{{ .Values.mongodb.port }}
-                /{{ .Values.mongodb.database }}
-
+                mongodb://encounters-mongodb:{{ .Values.mongodb.port }}
             - name: MEDIA_DIR
               value: {{ .Values.backend.mediaMountPath | quote }}
             {{- range $k, $v := .Values.backend.extraEnv }}

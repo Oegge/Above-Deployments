@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  nginx-local-proxy:
+    image: nginx:1.27-alpine
+    container_name: local-proxy
+    ports:
+      - "80:80"    # HTTP to NGINX (required)
+    volumes:
+      - ./nginx.local.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
